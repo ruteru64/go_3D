@@ -1,0 +1,190 @@
+package render
+
+import (
+	"fmt"
+	"go3D/imagetype"
+	"image"
+	"image/png"
+	"math"
+	"os"
+)
+
+func Do() {
+	var a image.Rectangle
+	a.Max = image.Point{imagetype.W, imagetype.H}
+	a.Min = image.Point{0, 0}
+	myImage := image.NewRGBA(a)
+	i := 0
+	for k := 0; k < len(myImage.Pix); k += 4 {
+		i++
+		if k%(400*4) == 0 {
+			i = 0
+		}
+		myImage.Pix[k] = imagetype.Background.Red
+		myImage.Pix[k+1] = imagetype.Background.Green
+		myImage.Pix[k+2] = imagetype.Background.Blue
+		myImage.Pix[k+3] = imagetype.Background.A
+	}
+	var d [511][511][511]int8 // [x][y][z] 0.1が最小単位
+	d = create(d)
+	Xcode(d, myImage)
+	savefile, err := os.Create(imagetype.Filename)
+	if err != nil {
+		fmt.Println("保存するためのファイルが作成できませんでした。")
+		os.Exit(1)
+	}
+	defer savefile.Close()
+	png.Encode(savefile, myImage)
+	return
+}
+
+func Xcode(d [511][511][511]int8, n *image.RGBA) bool {
+	f := -1
+	for i := 55; i < 400+55; i++ {
+		for k := 55; k < 400+55; k++ {
+			f++
+			for m := 55; m < 400+55; m++ {
+				if d[400+55-k][400+55-i][m] == 2 {
+					n.Pix[f*4] = 0 + uint8(m/40)
+					n.Pix[f*4+1] = 0 + uint8(m/40)
+					n.Pix[f*4+2] = 0 + uint8(m/40)
+					//fmt.Println(k, i)
+				}
+			}
+			if int(imagetype.GetFloor().Pos) >= 400+55-i-1 {
+				n.Pix[f*4] = imagetype.GetFloor().Color.Red
+				n.Pix[f*4+1] = imagetype.GetFloor().Color.Green
+				n.Pix[f*4+2] = imagetype.GetFloor().Color.Blue
+			}
+		}
+	}
+	for i := 0; i < 511; i++ {
+		for k := 0; k < 511; k++ {
+			for j := 0; j < 511; j++ {
+				if d[k][j][i] == 2 {
+					//fmt.Println(k, i)
+				}
+			}
+		}
+	}
+	return true
+}
+
+func create(d [511][511][511]int8) [511][511][511]int8 {
+	sq := imagetype.GetSquare()
+	size := sq.Length
+	marginX := int((sq.Pos.X - size/2 + 5.6) * 10)
+	marginZ := int((sq.Pos.Z - size/2 + 5.6) * 10)
+	marginY := int((sq.Pos.Y - size/2 + 5.6) * 10)
+	if marginX >= 0 {
+		marginX = 0
+	} else {
+		marginX *= -1
+	}
+	if marginZ >= 0 {
+		marginZ = 0
+	} else {
+		marginZ *= -1
+	}
+	if marginY >= 0 {
+		marginY = 0
+	} else {
+		marginY *= -1
+	}
+	var poss [3 * 8]int
+	for i := 0; i < 8; i++ {
+		var pos imagetype.Position
+		if i/4 == 0 { //右
+			if i/2 == 0 { //前
+				if i%2 == 0 { //上
+					pos.X = float32(math.Cos((float64(sq.AngleY)+45)/180)*math.Cos((float64(sq.AngleZ)-45)/180)) * size
+					pos.Y = float32(math.Cos((float64(sq.AngleZ)-45)/180)*math.Cos((float64(sq.AngleX)+45)/180)) * size
+					pos.Z = float32(math.Cos((float64(sq.AngleX)+45)/180)*math.Cos((float64(sq.AngleY)+45)/180)) * size
+				} else { //下
+					pos.X = float32(math.Cos((float64(sq.AngleY)-45)/180)*math.Cos((float64(sq.AngleZ)-45)/180)) * size
+					pos.Y = float32(math.Cos((float64(sq.AngleZ)-45)/180)*math.Cos((float64(sq.AngleX)+45)/180)) * size
+					pos.Z = float32(math.Cos((float64(sq.AngleX)+45)/180)*math.Cos((float64(sq.AngleY)-45)/180)) * size
+				}
+			} else { //後
+				if i%2 == 0 { //上
+					pos.X = float32(math.Cos((float64(sq.AngleY)+45)/180)*math.Cos((float64(sq.AngleZ)+45)/180)) * size
+					pos.Y = float32(math.Cos((float64(sq.AngleZ)+45)/180)*math.Cos((float64(sq.AngleX)+45)/180)) * size
+					pos.Z = float32(math.Cos((float64(sq.AngleX)+45)/180)*math.Cos((float64(sq.AngleY)+45)/180)) * size
+				} else { //下
+					pos.X = float32(math.Cos((float64(sq.AngleY)-45)/180)*math.Cos((float64(sq.AngleZ)+45)/180)) * size
+					pos.Y = float32(math.Cos((float64(sq.AngleZ)+45)/180)*math.Cos((float64(sq.AngleX)+45)/180)) * size
+					pos.Z = float32(math.Cos((float64(sq.AngleX)+45)/180)*math.Cos((float64(sq.AngleY)-45)/180)) * size
+				}
+			}
+		} else { //左
+			if i/2 == 0 { //前
+				if i%2 == 0 { //上
+					pos.X = float32(math.Cos((float64(sq.AngleY)+45)/180)*math.Cos((float64(sq.AngleZ)-45)/180)) * size
+					pos.Y = float32(math.Cos((float64(sq.AngleZ)-45)/180)*math.Cos((float64(sq.AngleX)-45)/180)) * size
+					pos.Z = float32(math.Cos((float64(sq.AngleX)-45)/180)*math.Cos((float64(sq.AngleY)+45)/180)) * size
+				} else { //下
+					pos.X = float32(math.Cos((float64(sq.AngleY)-45)/180)*math.Cos((float64(sq.AngleZ)-45)/180)) * size
+					pos.Y = float32(math.Cos((float64(sq.AngleZ)-45)/180)*math.Cos((float64(sq.AngleX)-45)/180)) * size
+					pos.Z = float32(math.Cos((float64(sq.AngleX)-45)/180)*math.Cos((float64(sq.AngleY)-45)/180)) * size
+				}
+			} else { //後
+				if i%2 == 0 { //上
+					pos.X = float32(math.Cos((float64(sq.AngleY)+45)/180)*math.Cos((float64(sq.AngleZ)+45)/180)) * size
+					pos.Y = float32(math.Cos((float64(sq.AngleZ)+45)/180)*math.Cos((float64(sq.AngleX)-45)/180)) * size
+					pos.Z = float32(math.Cos((float64(sq.AngleX)-45)/180)*math.Cos((float64(sq.AngleY)+45)/180)) * size
+				} else { //下
+					pos.X = float32(math.Cos((float64(sq.AngleY)-45)/180)*math.Cos((float64(sq.AngleZ)+45)/180)) * size
+					pos.Y = float32(math.Cos((float64(sq.AngleZ)+45)/180)*math.Cos((float64(sq.AngleX)-45)/180)) * size
+					pos.Z = float32(math.Cos((float64(sq.AngleX)-45)/180)*math.Cos((float64(sq.AngleY)-45)/180)) * size
+				}
+			}
+		}
+		poss[i*3] = int((pos.X+sq.Pos.X)*10) + 56
+		poss[i*3+1] = int((pos.Y+sq.Pos.Y)*10) + 56
+		poss[i*3+2] = int((pos.Z+sq.Pos.Z)*10) + 56
+		d[poss[i*3]][poss[i*3+1]][poss[i*3+2]] = 2
+		fmt.Println(poss)
+	}
+	var connect [7][3]int
+	connect[0] = [3]int{1, 2, 4}
+	connect[1] = [3]int{3, 5, 0}
+	connect[2] = [3]int{3, 6, 0}
+	connect[3] = [3]int{7, 0, 0}
+	connect[4] = [3]int{5, 6, 0}
+	connect[5] = [3]int{7, 0, 0}
+	connect[6] = [3]int{7, 0, 0}
+	for i := 0; i < 6; i++ {
+		for f := 0; f < 3; f++ {
+			k := connect[i][f]
+			if k == 0 {
+				continue
+			}
+			if poss[i*3] != poss[k*3] { // xにさがあるとき
+				x := poss[i*3] - poss[k*3]
+				xa := int(math.Abs(float64(x)))
+				y := poss[i*3+1] - poss[k*3+1]
+				z := poss[i*3+2] - poss[k*3+2]
+				for n := 1; n < xa; n++ {
+					d[poss[i*3]+(x*n/xa)][poss[i*3+1]+(y*n/xa)][poss[i*3+2]+(z*n/xa)] = 2
+				}
+			} else if poss[i*3+1] != poss[k*3+1] { // yにさがあるとき
+				x := poss[i*3] - poss[k*3]
+				y := poss[i*3+1] - poss[k*3+1]
+				z := poss[i*3+2] - poss[k*3+2]
+				xa := int(math.Abs(float64(y)))
+				for n := 1; n < xa; n++ {
+					d[poss[i*3]+(x*n/xa)][poss[i*3+1]+(y*n/xa)][poss[i*3+2]+(z*n/xa)] = 2
+				}
+			} else { // zにさがあるとき
+				x := poss[i*3] - poss[k*3]
+				y := poss[i*3+1] - poss[k*3+1]
+				z := poss[i*3+2] - poss[k*3+2]
+				xa := int(math.Abs(float64(z)))
+				for n := 1; n < xa; n++ {
+					d[poss[i*3]+(x*n/xa)][poss[i*3+1]+(y*n/xa)][poss[i*3+2]+(z*n/xa)] = 2
+				}
+			}
+		}
+	}
+	return d
+}
