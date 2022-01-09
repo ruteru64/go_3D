@@ -94,6 +94,14 @@ func create(d [511][511][511]int8) [511][511][511]int8 {
 	var poss [3 * 8]int
 	for i := 0; i < 8; i++ {
 		var pos imagetype.Position
+		/*
+			//テストコード
+			if i != 6 {
+				if true {
+					continue
+				}
+			}
+		*/
 		if i/4 == 0 { //右
 			if i/2 == 0 { //前
 				if i%2 == 0 { //上
@@ -117,7 +125,7 @@ func create(d [511][511][511]int8) [511][511][511]int8 {
 				}
 			}
 		} else { //左
-			if i/2 == 0 { //前
+			if i/2 == 3 { //前
 				if i%2 == 0 { //上
 					pos.X = float32(math.Cos((float64(sq.AngleY)+45)/180)*math.Cos((float64(sq.AngleZ)-45)/180)) * size
 					pos.Y = float32(math.Cos((float64(sq.AngleZ)-45)/180)*math.Cos((float64(sq.AngleX)-45)/180)) * size
@@ -143,46 +151,28 @@ func create(d [511][511][511]int8) [511][511][511]int8 {
 		poss[i*3+1] = int((pos.Y+sq.Pos.Y)*10) + 56
 		poss[i*3+2] = int((pos.Z+sq.Pos.Z)*10) + 56
 		d[poss[i*3]][poss[i*3+1]][poss[i*3+2]] = 2
-		fmt.Println(poss)
+		//fmt.Println(poss)
 	}
 	var connect [7][3]int
-	connect[0] = [3]int{1, 2, 4}
-	connect[1] = [3]int{3, 5, 0}
-	connect[2] = [3]int{3, 6, 0}
-	connect[3] = [3]int{7, 0, 0}
+	connect[0] = [3]int{1, 2, 6}
+	connect[1] = [3]int{3, 7, 0}
+	connect[2] = [3]int{3, 4, 0}
+	connect[3] = [3]int{5, 0, 0}
 	connect[4] = [3]int{5, 6, 0}
 	connect[5] = [3]int{7, 0, 0}
 	connect[6] = [3]int{7, 0, 0}
-	for i := 0; i < 6; i++ {
+	for i := 0; i <= 6; i++ {
 		for f := 0; f < 3; f++ {
 			k := connect[i][f]
 			if k == 0 {
 				continue
 			}
-			if poss[i*3] != poss[k*3] { // xにさがあるとき
-				x := poss[i*3] - poss[k*3]
-				xa := int(math.Abs(float64(x)))
-				y := poss[i*3+1] - poss[k*3+1]
-				z := poss[i*3+2] - poss[k*3+2]
-				for n := 1; n < xa; n++ {
-					d[poss[i*3]+(x*n/xa)][poss[i*3+1]+(y*n/xa)][poss[i*3+2]+(z*n/xa)] = 2
-				}
-			} else if poss[i*3+1] != poss[k*3+1] { // yにさがあるとき
-				x := poss[i*3] - poss[k*3]
-				y := poss[i*3+1] - poss[k*3+1]
-				z := poss[i*3+2] - poss[k*3+2]
-				xa := int(math.Abs(float64(y)))
-				for n := 1; n < xa; n++ {
-					d[poss[i*3]+(x*n/xa)][poss[i*3+1]+(y*n/xa)][poss[i*3+2]+(z*n/xa)] = 2
-				}
-			} else { // zにさがあるとき
-				x := poss[i*3] - poss[k*3]
-				y := poss[i*3+1] - poss[k*3+1]
-				z := poss[i*3+2] - poss[k*3+2]
-				xa := int(math.Abs(float64(z)))
-				for n := 1; n < xa; n++ {
-					d[poss[i*3]+(x*n/xa)][poss[i*3+1]+(y*n/xa)][poss[i*3+2]+(z*n/xa)] = 2
-				}
+			x := poss[i*3] - poss[k*3]
+			y := poss[i*3+1] - poss[k*3+1]
+			z := poss[i*3+2] - poss[k*3+2]
+			xa := int(size) * 4
+			for n := 1; n < xa; n++ {
+				d[poss[i*3]-(x*n)/xa][poss[i*3+1]-(y*n)/xa][poss[i*3+2]-(z*n)/xa] = 2
 			}
 		}
 	}

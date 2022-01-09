@@ -46,11 +46,11 @@ func test() {
 	imagetype.SetLight(b)
 
 	var c imagetype.Square
-	c.Pos = imagetype.SetPos(10.0, 0.0, 0.0)
-	c.Length = 15.0
+	c.Pos = imagetype.SetPos(10.0, 10.0, 20.0)
+	c.Length = 20.0
 	c.Material = 1
 	c.AngleX = 30
-	c.AngleY = 20
+	c.AngleY = 320
 	c.AngleZ = 70
 	c.Color = imagetype.SetColorAll(0xff)
 	c.Objectname = "testCube"
