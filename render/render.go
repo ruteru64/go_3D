@@ -29,7 +29,7 @@ func Do() {
 		myImage.Pix[k+3] = imagetype.Background.A
 	}
 	var w [511][511][511]int8 // [x][y][z] 0.1が最小単位
-	d := create(w)
+	d := createCube(w)
 	if err != nil {
 		return
 	}
@@ -71,7 +71,7 @@ func Xcode(d [511][511][511]int8, n *image.RGBA) bool {
 	return true
 }
 
-func create(d [511][511][511]int8) [511][511][511]int8 {
+func createCube(d [511][511][511]int8) [511][511][511]int8 {
 	for index := 0; index < imagetype.GetLenSquare(); index++ {
 		sq := imagetype.GetSquare(index)
 		size := sq.Length
