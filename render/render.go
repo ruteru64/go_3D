@@ -32,9 +32,6 @@ func Do() {
 	if err != nil {
 		return
 	}
-	if err != nil {
-		return
-	}
 	Xcode(myImage)
 	savefile, err := os.Create(imagetype.Filename)
 	if err != nil {
@@ -79,7 +76,11 @@ func Xcode(n *image.RGBA) bool {
 
 func createCube() error {
 	for index := 0; index < imagetype.GetLenSquare(); index++ {
-		sq := imagetype.GetSquare(index)
+		sq, err := imagetype.GetSquare(index)
+		if err != nil {
+			fmt.Println(err)
+			return err
+		}
 		size := sq.Length
 		marginX := int((sq.Pos.X - size/2 + 10) * 10)
 		marginZ := int((sq.Pos.Z - size/2 + 10) * 10)
