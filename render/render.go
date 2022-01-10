@@ -266,10 +266,12 @@ func createSphia() error {
 				d[int((sph.Pos.X)*10)+100][int((sph.Pos.Y+float32(math.Cos(float64(i*3)))*size)*10)+100][int((sph.Pos.Z+float32(math.Sin(float64(i*3)))*size)*10)+100] = 2
 			}
 		} else {
-			for i := 0; i < 720; i++ {
-				d[int((sph.Pos.X+float32(math.Sin(float64(i/2)))*size)*10)+100][int(sph.Pos.Y*10)+100][int((sph.Pos.Z+float32(math.Cos(float64(i/2)))*size)*10)+100] = 2
-				d[int((sph.Pos.X+float32(math.Cos(float64(i/2)))*size)*10)+100][int((sph.Pos.Y+float32(math.Sin(float64(i/2)))*size)*10)+100][int(sph.Pos.Z*10)+100] = 2
-				d[int((sph.Pos.X)*10)+100][int((sph.Pos.Y+float32(math.Cos(float64(i/2)))*size)*10)+100][int((sph.Pos.Z+float32(math.Sin(float64(i/2)))*size)*10)+100] = 2
+			for i := 0; i < 360; i++ {
+				for i0 := 0; i0 < 360; i0++ {
+					for i1 := 0; i1 < 360; i1++ {
+						d[int((sph.Pos.X+float32(math.Sin(float64(i)))*float32(math.Cos(float64(i0)))*size)*10)+100][int((sph.Pos.Y+float32(math.Sin(float64(i0)))*float32(math.Cos(float64(i1)))*size)*10)+100][int((sph.Pos.Z+float32(math.Sin(float64(i1)))*float32(math.Cos(float64(i)))*size)*10)+100] = 2
+					}
+				}
 			}
 		}
 	}
