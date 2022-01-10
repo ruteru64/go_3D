@@ -1,6 +1,7 @@
 package render
 
 import (
+	"errors"
 	"fmt"
 	"go3D/imagetype"
 	"image"
@@ -8,6 +9,8 @@ import (
 	"math"
 	"os"
 )
+
+var err error = nil
 
 func Do() {
 	var a image.Rectangle
@@ -25,8 +28,11 @@ func Do() {
 		myImage.Pix[k+2] = imagetype.Background.Blue
 		myImage.Pix[k+3] = imagetype.Background.A
 	}
-	var d [511][511][511]int8 // [x][y][z] 0.1が最小単位
-	d = create(d)
+	var w [511][511][511]int8 // [x][y][z] 0.1が最小単位
+	d := create(w)
+	if err != nil {
+		return
+	}
 	Xcode(d, myImage)
 	savefile, err := os.Create(imagetype.Filename)
 	if err != nil {
@@ -146,6 +152,11 @@ func create(d [511][511][511]int8) [511][511][511]int8 {
 			poss[i*3] = int((pos.X+sq.Pos.X)*10) + 56
 			poss[i*3+1] = int((pos.Y+sq.Pos.Y)*10) + 56
 			poss[i*3+2] = int((pos.Z+sq.Pos.Z)*10) + 56
+			if poss[i*3] < 0 || poss[i*3+1] < 0 || poss[i*3+2] < 0 || poss[i*3] >= 511 || poss[i*3+1] >= 511 || poss[i*3+2] >= 511 {
+				fmt.Println("値の範囲オーバー")
+				err = errors.New("値の範囲オーバー")
+				return d
+			}
 			d[poss[i*3]][poss[i*3+1]][poss[i*3+2]] = 2
 			//fmt.Println(poss)
 		}

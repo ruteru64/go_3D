@@ -2,6 +2,7 @@ package main
 
 import (
 	"go3D/imagetype"
+	"go3D/input"
 	"go3D/render"
 	"os"
 )
@@ -14,6 +15,7 @@ import (
  */
 func main() {
 	test()
+	input.SetInput()
 	render.Do()
 	if len(os.Args) == 2 {
 		if os.Args[1] == "clean" {
