@@ -73,7 +73,7 @@ func test() {
 	s.Pos = imagetype.SetPos(5.0, 5.0, 0.0)
 	s.Color = imagetype.SetColorAll(0xff)
 	s.Length = 5.0
-	s.Material = 0
+	s.Material = 1
 	s.Objectname = "testSphia"
 	imagetype.SetSphia(s)
 }
