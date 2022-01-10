@@ -10,7 +10,7 @@ import (
 	"os"
 )
 
-var err error = nil
+var d [1000][1000][1000]int8 // [x][y][z] 0.1が最小単位
 
 func Do() {
 	var a image.Rectangle
@@ -28,12 +28,14 @@ func Do() {
 		myImage.Pix[k+2] = imagetype.Background.Blue
 		myImage.Pix[k+3] = imagetype.Background.A
 	}
-	var w [511][511][511]int8 // [x][y][z] 0.1が最小単位
-	d := createCube(w)
+	err := createCube()
 	if err != nil {
 		return
 	}
-	Xcode(d, myImage)
+	if err != nil {
+		return
+	}
+	Xcode(myImage)
 	savefile, err := os.Create(imagetype.Filename)
 	if err != nil {
 		fmt.Println("保存するためのファイルが作成できませんでした。")
@@ -44,24 +46,28 @@ func Do() {
 	return
 }
 
-func Xcode(d [511][511][511]int8, n *image.RGBA) bool {
+func Xcode(n *image.RGBA) bool {
 	f := -1
-	for i := 55; i < 400+55; i++ {
-		for k := 55; k < 400+55; k++ {
+	if imagetype.W > 900 && imagetype.H > 900 {
+		fmt.Println("画像サイズが大きすぎます")
+		return false
+	}
+	for i := 100; i < imagetype.H+100; i++ {
+		for k := 100; k < imagetype.W+100; k++ {
 			f++
-			for m := 55; m < 400+55; m++ {
-				if d[400+55-k][400+55-i][m] == 2 {
+			for m := 100; m < imagetype.W+100; m++ {
+				if d[imagetype.W+100-k][imagetype.H+100-i][m] == 2 {
 					n.Pix[f*4] = 0
 					n.Pix[f*4+1] = 0
 					n.Pix[f*4+2] = 0
 					//fmt.Println(k, i)
-				} else if d[400+55-k][400+55-i][m] == 3 && !(n.Pix[f*4] == 0 && n.Pix[f*4+1] == 0 && n.Pix[f*4+2] == 0) {
+				} else if d[imagetype.H+100-k][imagetype.W+100-i][m] == 3 && !(n.Pix[f*4] == 0 && n.Pix[f*4+1] == 0 && n.Pix[f*4+2] == 0) {
 					n.Pix[f*4] = 0 + 0xff
 					n.Pix[f*4+1] = 0 + 0xff
 					n.Pix[f*4+2] = 0 + 0xff
 				}
 			}
-			if int(imagetype.GetFloor().Pos) >= 400+55-i-1 {
+			if int(imagetype.GetFloor().Pos) >= imagetype.H+99-i {
 				n.Pix[f*4] = imagetype.GetFloor().Color.Red
 				n.Pix[f*4+1] = imagetype.GetFloor().Color.Green
 				n.Pix[f*4+2] = imagetype.GetFloor().Color.Blue
@@ -71,13 +77,13 @@ func Xcode(d [511][511][511]int8, n *image.RGBA) bool {
 	return true
 }
 
-func createCube(d [511][511][511]int8) [511][511][511]int8 {
+func createCube() error {
 	for index := 0; index < imagetype.GetLenSquare(); index++ {
 		sq := imagetype.GetSquare(index)
 		size := sq.Length
-		marginX := int((sq.Pos.X - size/2 + 5.6) * 10)
-		marginZ := int((sq.Pos.Z - size/2 + 5.6) * 10)
-		marginY := int((sq.Pos.Y - size/2 + 5.6) * 10)
+		marginX := int((sq.Pos.X - size/2 + 10) * 10)
+		marginZ := int((sq.Pos.Z - size/2 + 10) * 10)
+		marginY := int((sq.Pos.Y - size/2 + 10) * 10)
 		if marginX >= 0 {
 			marginX = 0
 		} else {
@@ -149,13 +155,12 @@ func createCube(d [511][511][511]int8) [511][511][511]int8 {
 					}
 				}
 			}
-			poss[i*3] = int((pos.X+sq.Pos.X)*10) + 56
-			poss[i*3+1] = int((pos.Y+sq.Pos.Y)*10) + 56
-			poss[i*3+2] = int((pos.Z+sq.Pos.Z)*10) + 56
-			if poss[i*3] < 0 || poss[i*3+1] < 0 || poss[i*3+2] < 0 || poss[i*3] >= 511 || poss[i*3+1] >= 511 || poss[i*3+2] >= 511 {
+			poss[i*3] = int((pos.X+sq.Pos.X)*10) + 100
+			poss[i*3+1] = int((pos.Y+sq.Pos.Y)*10) + 100
+			poss[i*3+2] = int((pos.Z+sq.Pos.Z)*10) + 100
+			if poss[i*3] < 0 || poss[i*3+1] < 0 || poss[i*3+2] < 0 || poss[i*3] >= 1000 || poss[i*3+1] >= 1000 || poss[i*3+2] >= 1000 {
 				fmt.Println("値の範囲オーバー")
-				err = errors.New("値の範囲オーバー")
-				return d
+				return errors.New("値の範囲オーバー")
 			}
 			d[poss[i*3]][poss[i*3+1]][poss[i*3+2]] = 2
 			//fmt.Println(poss)
@@ -204,5 +209,5 @@ func createCube(d [511][511][511]int8) [511][511][511]int8 {
 			}
 		}
 	}
-	return d
+	return nil
 }

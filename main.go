@@ -27,6 +27,8 @@ func main() {
 
 func test() {
 	imagetype.Filename = "test.png"
+	imagetype.W = 400
+	imagetype.H = 400
 	var v imagetype.Rgb
 	imagetype.RenderType = "s"
 	v = imagetype.SetColorAll(0x88)
