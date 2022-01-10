@@ -32,6 +32,10 @@ func Do() {
 	if err != nil {
 		return
 	}
+	err = createSphia()
+	if err != nil {
+		return
+	}
 	Xcode(myImage)
 	savefile, err := os.Create(imagetype.Filename)
 	if err != nil {
@@ -211,4 +215,64 @@ func createCube() error {
 		}
 	}
 	return nil
+}
+
+// 球体を配列に入れる処理を記述
+func createSphia() error {
+	for index := 0; index < imagetype.GetSphiaLen(); index++ {
+		sph, err := imagetype.GetSphia(index)
+		if err != nil {
+			fmt.Println(err)
+			return nil
+		}
+		size := abs(sph.Length)
+		if (sph.Pos.X+size)*10 > 1000 || (sph.Pos.Y+size)*10 > 1000 || (sph.Pos.Z+size)*10 > 1000 {
+			err = errors.New("範囲外です")
+			fmt.Println(err)
+			return err
+		}
+		if (sph.Pos.X-size)*10+100 < 0 || (sph.Pos.Y-size)*10+100 < 0 || (sph.Pos.Z-size)*10+100 < 0 {
+			err = errors.New("範囲外です")
+			fmt.Println(err)
+			return err
+		}
+		if sph.Material == 0 {
+			d[int(sph.Pos.X*10)+100][int(sph.Pos.Y*10)+100][int(sph.Pos.Z*10)+100] = 2
+			d[int((sph.Pos.X+size)*10)+100][int((sph.Pos.Y+size)*10)+100][int((sph.Pos.Z+size)*10)+100] = 2
+			d[int((sph.Pos.X+size)*10)+100][int((sph.Pos.Y+size)*10)+100][int((sph.Pos.Z-size)*10)+100] = 2
+			d[int((sph.Pos.X+size)*10)+100][int((sph.Pos.Y-size)*10)+100][int((sph.Pos.Z+size)*10)+100] = 2
+			d[int((sph.Pos.X+size)*10)+100][int((sph.Pos.Y-size)*10)+100][int((sph.Pos.Z-size)*10)+100] = 2
+			d[int((sph.Pos.X-size)*10)+100][int((sph.Pos.Y+size)*10)+100][int((sph.Pos.Z+size)*10)+100] = 2
+			d[int((sph.Pos.X-size)*10)+100][int((sph.Pos.Y+size)*10)+100][int((sph.Pos.Z-size)*10)+100] = 2
+			d[int((sph.Pos.X-size)*10)+100][int((sph.Pos.Y-size)*10)+100][int((sph.Pos.Z+size)*10)+100] = 2
+			d[int((sph.Pos.X-size)*10)+100][int((sph.Pos.Y-size)*10)+100][int((sph.Pos.Z-size)*10)+100] = 2
+			for i := 0; i < int(size)*5; i++ {
+				d[int((sph.Pos.X+size)*10)+100-i*4][int((sph.Pos.Y+size)*10)+100][int((sph.Pos.Z+size)*10)+100] = 2
+				d[int((sph.Pos.X+size)*10)+100-i*4][int((sph.Pos.Y+size)*10)+100][int((sph.Pos.Z-size)*10)+100] = 2
+				d[int((sph.Pos.X+size)*10)+100-i*4][int((sph.Pos.Y-size)*10)+100][int((sph.Pos.Z+size)*10)+100] = 2
+				d[int((sph.Pos.X+size)*10)+100-i*4][int((sph.Pos.Y-size)*10)+100][int((sph.Pos.Z-size)*10)+100] = 2
+				d[int((sph.Pos.X+size)*10)+100][int((sph.Pos.Y+size)*10)+100-i*4][int((sph.Pos.Z+size)*10)+100] = 2
+				d[int((sph.Pos.X+size)*10)+100][int((sph.Pos.Y+size)*10)+100-i*4][int((sph.Pos.Z-size)*10)+100] = 2
+				d[int((sph.Pos.X-size)*10)+100][int((sph.Pos.Y+size)*10)+100-i*4][int((sph.Pos.Z+size)*10)+100] = 2
+				d[int((sph.Pos.X-size)*10)+100][int((sph.Pos.Y+size)*10)+100-i*4][int((sph.Pos.Z-size)*10)+100] = 2
+				d[int((sph.Pos.X+size)*10)+100][int((sph.Pos.Y+size)*10)+100][int((sph.Pos.Z+size)*10)+100-i*4] = 2
+				d[int((sph.Pos.X+size)*10)+100][int((sph.Pos.Y-size)*10)+100][int((sph.Pos.Z+size)*10)+100-i*4] = 2
+				d[int((sph.Pos.X-size)*10)+100][int((sph.Pos.Y+size)*10)+100][int((sph.Pos.Z+size)*10)+100-i*4] = 2
+				d[int((sph.Pos.X-size)*10)+100][int((sph.Pos.Y-size)*10)+100][int((sph.Pos.Z+size)*10)+100-i*4] = 2
+			}
+		}
+		for i := 0; i < 120; i++ {
+			d[int((sph.Pos.X+float32(math.Sin(float64(i*3)))*size)*10)+100][int(sph.Pos.Y*10)+100][int((sph.Pos.Z+float32(math.Cos(float64(i*3)))*size)*10)+100] = 2
+			d[int((sph.Pos.X+float32(math.Cos(float64(i*3)))*size)*10)+100][int((sph.Pos.Y+float32(math.Sin(float64(i*3)))*size)*10)+100][int(sph.Pos.Z*10)+100] = 2
+			d[int((sph.Pos.X)*10)+100][int((sph.Pos.Y+float32(math.Cos(float64(i*3)))*size)*10)+100][int((sph.Pos.Z+float32(math.Sin(float64(i*3)))*size)*10)+100] = 2
+		}
+	}
+	return nil
+}
+
+func abs(c float32) float32 {
+	if c >= 0 {
+		return c
+	}
+	return -1 * c
 }

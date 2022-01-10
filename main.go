@@ -27,8 +27,8 @@ func main() {
 
 func test() {
 	imagetype.Filename = "test.png"
-	imagetype.W = 400
-	imagetype.H = 400
+	imagetype.W = 800
+	imagetype.H = 800
 	var v imagetype.Rgb
 	imagetype.RenderType = "s"
 	v = imagetype.SetColorAll(0x88)
@@ -69,4 +69,11 @@ func test() {
 	c.Color = imagetype.SetColorAll(0xff)
 	c.Objectname = "testCube2"
 	imagetype.SetSquare(c)
+	var s imagetype.Sphia
+	s.Pos = imagetype.SetPos(5.0, 5.0, 0.0)
+	s.Color = imagetype.SetColorAll(0xff)
+	s.Length = 5.0
+	s.Material = 0
+	s.Objectname = "testSphia"
+	imagetype.SetSphia(s)
 }
