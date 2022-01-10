@@ -86,8 +86,11 @@ type Camera struct {
 
 var fl Floor
 var li Light
-var sq Square
+var sq []Square
 var Cm Camera
+
+//s=sleton,m=mat
+var RenderType string
 
 // 出力ファイルの名前
 var Filename string
@@ -125,7 +128,7 @@ func SetLight(l Light) bool {
 
 // 立方体のセッター
 func SetSquare(s Square) bool {
-	sq = s
+	sq = append(sq, s)
 	return true
 }
 
@@ -140,8 +143,12 @@ func GetLight() Light {
 }
 
 // 立方体のゲッター
-func GetSquare() Square {
-	return sq
+func GetSquare(zz int) Square {
+	return sq[zz]
+}
+
+func GetLenSquare() int {
+	return len(sq)
 }
 
 // ポジションのセッター

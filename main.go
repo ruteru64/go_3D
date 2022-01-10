@@ -26,6 +26,7 @@ func main() {
 func test() {
 	imagetype.Filename = "test.png"
 	var v imagetype.Rgb
+	imagetype.RenderType = "s"
 	v = imagetype.SetColorAll(0x88)
 	v = imagetype.SetColorR(107, v)
 	v = imagetype.SetColorG(216, v)
@@ -54,5 +55,14 @@ func test() {
 	c.AngleZ = 70
 	c.Color = imagetype.SetColorAll(0xff)
 	c.Objectname = "testCube"
+	imagetype.SetSquare(c)
+	c.Pos = imagetype.SetPos(10.0, 10.0, 20.0)
+	c.Length = 10.0
+	c.Material = 1
+	c.AngleX = 50
+	c.AngleY = 30
+	c.AngleZ = 20
+	c.Color = imagetype.SetColorAll(0xff)
+	c.Objectname = "testCube2"
 	imagetype.SetSquare(c)
 }
