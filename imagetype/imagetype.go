@@ -17,8 +17,8 @@ type Rgb struct {
  * Materialtype
  *
  * 追加する素材はここに追加する
- * 0 = glass
- * 1 = plastic
+ * 0 = スケルトン
+ * 1 = マット
  */
 
 /**

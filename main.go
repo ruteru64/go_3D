@@ -49,19 +49,19 @@ func test() {
 	var c imagetype.Square
 	c.Pos = imagetype.SetPos(10.0, 10.0, 20.0)
 	c.Length = 20.0
-	c.Material = 1
 	c.AngleX = 30
 	c.AngleY = 320
 	c.AngleZ = 70
+	c.Material = 0
 	c.Color = imagetype.SetColorAll(0xff)
 	c.Objectname = "testCube"
 	imagetype.SetSquare(c)
 	c.Pos = imagetype.SetPos(10.0, 10.0, 20.0)
 	c.Length = 10.0
-	c.Material = 1
 	c.AngleX = 50
 	c.AngleY = 30
 	c.AngleZ = 20
+	c.Material = 1
 	c.Color = imagetype.SetColorAll(0xff)
 	c.Objectname = "testCube2"
 	imagetype.SetSquare(c)

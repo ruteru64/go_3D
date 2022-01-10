@@ -45,25 +45,20 @@ func Xcode(d [511][511][511]int8, n *image.RGBA) bool {
 			f++
 			for m := 55; m < 400+55; m++ {
 				if d[400+55-k][400+55-i][m] == 2 {
-					n.Pix[f*4] = 0 + uint8(m/40)
-					n.Pix[f*4+1] = 0 + uint8(m/40)
-					n.Pix[f*4+2] = 0 + uint8(m/40)
+					n.Pix[f*4] = 0
+					n.Pix[f*4+1] = 0
+					n.Pix[f*4+2] = 0
 					//fmt.Println(k, i)
+				} else if d[400+55-k][400+55-i][m] == 3 && !(n.Pix[f*4] == 0 && n.Pix[f*4+1] == 0 && n.Pix[f*4+2] == 0) {
+					n.Pix[f*4] = 0 + 0xff
+					n.Pix[f*4+1] = 0 + 0xff
+					n.Pix[f*4+2] = 0 + 0xff
 				}
 			}
 			if int(imagetype.GetFloor().Pos) >= 400+55-i-1 {
 				n.Pix[f*4] = imagetype.GetFloor().Color.Red
 				n.Pix[f*4+1] = imagetype.GetFloor().Color.Green
 				n.Pix[f*4+2] = imagetype.GetFloor().Color.Blue
-			}
-		}
-	}
-	for i := 0; i < 511; i++ {
-		for k := 0; k < 511; k++ {
-			for j := 0; j < 511; j++ {
-				if d[k][j][i] == 2 {
-					//fmt.Println(k, i)
-				}
 			}
 		}
 	}
@@ -174,6 +169,26 @@ func create(d [511][511][511]int8) [511][511][511]int8 {
 				xa := int(size) * 4
 				for n := 1; n < xa; n++ {
 					d[poss[i*3]-(x*n)/xa][poss[i*3+1]-(y*n)/xa][poss[i*3+2]-(z*n)/xa] = 2
+				}
+			}
+		}
+		if sq.Material == 1 {
+			//fmt.Println("中を埋める")
+			surface := [24]int{0, 1, 2, 3, 0, 1, 6, 7, 0, 2, 6, 4, 1, 3, 7, 5, 2, 3, 4, 5, 4, 5, 6, 7}
+			for i := 0; i < 6; i++ {
+				x := poss[surface[i*4]*3] - poss[surface[i*4+1]*3]
+				y := poss[surface[i*4]*3+1] - poss[surface[i*4+1]*3+1]
+				z := poss[surface[i*4]*3+2] - poss[surface[i*4+1]*3+2]
+				x1 := poss[surface[i*4]*3] - poss[surface[i*4+2]*3]
+				y1 := poss[surface[i*4]*3+1] - poss[surface[i*4+2]*3+1]
+				z1 := poss[surface[i*4]*3+2] - poss[surface[i*4+2]*3+2]
+				xa := int(size) * 4
+				for i0 := 1; i0 < int(size)*4-1; i0++ {
+					for i1 := 1; i1 < int(size)*4-1; i1++ {
+						if d[poss[surface[i*4]*3]-(x*i0)/xa-(x1*i1)/xa][poss[surface[i*4]*3+1]-(y*i0)/xa-(y1*i1)/xa][poss[surface[i*4]*3+2]-(z*i0)/xa-(z1*i1)/xa] != 2 {
+							d[poss[surface[i*4]*3]-(x*i0)/xa-(x1*i1)/xa][poss[surface[i*4]*3+1]-(y*i0)/xa-(y1*i1)/xa][poss[surface[i*4]*3+2]-(z*i0)/xa-(z1*i1)/xa] = 3
+						}
+					}
 				}
 			}
 		}
