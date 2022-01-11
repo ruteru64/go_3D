@@ -1,6 +1,9 @@
 package imagetype
 
-import "image/color"
+import (
+	"errors"
+	"image/color"
+)
 
 /**
  * RGB
@@ -41,6 +44,18 @@ type Square struct {
 	AngleX     float32
 	AngleY     float32
 	AngleZ     float32
+	Color      Rgb
+	Length     float32
+	Material   int
+}
+
+/**
+ * Sphia
+ * 球体の値を入れる
+ */
+type Sphia struct {
+	Objectname string
+	Pos        Position
 	Color      Rgb
 	Length     float32
 	Material   int
@@ -88,6 +103,7 @@ var fl Floor
 var li Light
 var sq []Square
 var Cm Camera
+var sphia []Sphia
 
 //s=sleton,m=mat
 var RenderType string
@@ -132,6 +148,28 @@ func SetSquare(s Square) bool {
 	return true
 }
 
+// 球体のセッター
+func SetSphia(s Sphia) bool {
+	sphia = append(sphia, s)
+	return true
+}
+
+// 球体のゲッター
+func GetSphia(x int) (Sphia, error) {
+	if len(sphia) > x {
+		return sphia[x], nil
+	}
+	return sphia[0], errors.New("配列の外です")
+}
+
+func GetSphiaLen() int {
+	return len(sphia)
+}
+
+func GetSphias() []Sphia {
+	return sphia
+}
+
 // 床のゲッター
 func GetFloor() Floor {
 	return fl
@@ -143,8 +181,12 @@ func GetLight() Light {
 }
 
 // 立方体のゲッター
-func GetSquare(zz int) Square {
-	return sq[zz]
+func GetSquare(zz int) (Square, error) {
+	if len(sq) > zz {
+		return sq[zz], nil
+	}
+	return sq[0], errors.New("配列の範囲外です")
+
 }
 
 func GetLenSquare() int {
