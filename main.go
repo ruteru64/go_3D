@@ -1,11 +1,55 @@
 package main
 
 import (
+	"fmt"
 	"go3D/imagetype"
 	"go3D/input"
 	"go3D/render"
+	"net/http"
 	"os"
+	"time"
 )
+
+// httpに適応した,適当に増やす
+func main() {
+	http.HandleFunc("/", handler)
+	http.HandleFunc("/index", handlerIndex)
+	http.HandleFunc("/genarate", handlerGenarate)
+	http.ListenAndServe(":80", nil)
+}
+
+// / の時
+func handler(web http.ResponseWriter, request *http.Request) {
+	fmt.Println("Time:" + time.Now().String() + " endpoint:\"/\"")
+	fmt.Fprintf(web, "404 NOT FOUND")
+}
+
+// /index の時
+func handlerIndex(web http.ResponseWriter, request *http.Request) {
+	fmt.Println("Time:" + time.Now().String() + " endpoint:\"/index\"")
+	fp, err := os.Open("./public/index.html")
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer fp.Close()
+	s := make([]byte, 1024)
+	fp.Read(s)
+	fmt.Fprintf(web, string(s))
+}
+
+// /genarate の時
+func handlerGenarate(web http.ResponseWriter, request *http.Request) {
+	fmt.Println("Time:" + time.Now().String() + " endpoint:\"/genarate\"")
+	generate()
+	fp, err := os.Open("./test.png")
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer fp.Close()
+	img := make([]byte, 1024*1024*1024)
+	fp.Read(img)
+	web.Write(img)
+}
 
 /**
  * [x,y,z]0,1,0の位置にカメラを置き
@@ -13,19 +57,18 @@ import (
  * Θ = 30°のなるように平行にカメラを置く(後々修整予定)
  * コマンドライン引数に"clean"がある場合生成したファイルを削除
  */
-func main() {
+func generate() {
 	if input.IsGenalateThisFile {
 		input.SetInput()
 	} else {
 		test()
 	}
 	render.Do()
-	if len(os.Args) == 2 {
-		if os.Args[1] == "clean" {
-			os.Remove(imagetype.Filename)
-		}
-	}
 	return
+}
+
+func clean() {
+	os.Remove(imagetype.Filename)
 }
 
 // 画像生成のテストコードinput.SetInput()で試用不使用を指定できる
