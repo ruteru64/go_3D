@@ -14,8 +14,11 @@ import (
  * コマンドライン引数に"clean"がある場合生成したファイルを削除
  */
 func main() {
-	test()
-	input.SetInput()
+	if input.IsGenalateThisFile {
+		input.SetInput()
+	} else {
+		test()
+	}
 	render.Do()
 	if len(os.Args) == 2 {
 		if os.Args[1] == "clean" {
@@ -25,6 +28,7 @@ func main() {
 	return
 }
 
+// 画像生成のテストコードinput.SetInput()で試用不使用を指定できる
 func test() {
 	imagetype.Filename = "test.png"
 	imagetype.W = 800
@@ -52,10 +56,10 @@ func test() {
 
 	var c imagetype.Square
 	c.Pos = imagetype.SetPos(10.0, 10.0, 20.0)
-	c.Length = 20.0
+	c.Length = 50.0
 	c.AngleX = 30
-	c.AngleY = 320
-	c.AngleZ = 70
+	c.AngleY = 32
+	c.AngleZ = 30
 	c.Material = 0
 	c.Color = imagetype.SetColorAll(0xff)
 	c.Objectname = "testCube"
