@@ -3,6 +3,7 @@ package imagetype
 import (
 	"errors"
 	"image/color"
+	"time"
 )
 
 /**
@@ -104,6 +105,8 @@ var li Light
 var sq []Square
 var Cm Camera
 var sphia []Sphia
+var IsDo bool = false
+var Do []time.Time
 
 //s=sleton,m=mat
 var RenderType string
@@ -119,6 +122,33 @@ var W int = 400
 
 // 縦
 var H int = 400
+
+func GetDo(a time.Time) bool {
+	if len(Do) == 0 {
+		return true
+	}
+	return Do[0] == a
+}
+
+func SetDo(a time.Time) {
+	Do = append(Do, a)
+}
+
+func RemoveDo() {
+	if len(Do) == 0 {
+		return
+	}
+	Do = Do[1:]
+}
+
+func GetinDo(a time.Time) bool {
+	for i := 0; i < len(Do); i++ {
+		if a == Do[i] {
+			return true
+		}
+	}
+	return false
+}
 
 func SetCamera() bool {
 	Cm.AngleX = 0

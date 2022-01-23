@@ -40,7 +40,17 @@ func handlerIndex(web http.ResponseWriter, request *http.Request) {
 // /genarate の時
 func handlerGenarate(web http.ResponseWriter, request *http.Request) {
 	fmt.Println("Time:" + time.Now().String() + " endpoint:\"/genarate\"")
-	generate()
+	id := time.Now()
+	for true {
+		if !imagetype.IsDo && imagetype.GetDo(id) {
+			imagetype.RemoveDo()
+			imagetype.IsDo = true
+			generate()
+			break
+		} else if imagetype.GetinDo(id) {
+			imagetype.SetDo(id)
+		}
+	}
 	fp, err := os.Open(imagetype.Filename)
 	if err != nil {
 		fmt.Println(err)
@@ -50,6 +60,7 @@ func handlerGenarate(web http.ResponseWriter, request *http.Request) {
 	web.Write(img)
 	fp.Close()
 	clean()
+	imagetype.IsDo = false
 }
 
 /**
