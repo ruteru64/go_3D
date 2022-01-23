@@ -41,14 +41,15 @@ func handlerIndex(web http.ResponseWriter, request *http.Request) {
 func handlerGenarate(web http.ResponseWriter, request *http.Request) {
 	fmt.Println("Time:" + time.Now().String() + " endpoint:\"/genarate\"")
 	generate()
-	fp, err := os.Open("./test.png")
+	fp, err := os.Open(imagetype.Filename)
 	if err != nil {
 		fmt.Println(err)
 	}
-	defer fp.Close()
 	img := make([]byte, 1024*1024*1024)
 	fp.Read(img)
 	web.Write(img)
+	fp.Close()
+	clean()
 }
 
 /**
